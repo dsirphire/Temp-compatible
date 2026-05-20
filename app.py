@@ -35,12 +35,15 @@ html, body, [data-testid="stAppViewContainer"], .stApp {
 #MainMenu {
     visibility: hidden;
 }
+
 footer {
     visibility: hidden;
 }
+
 header {
     visibility: hidden;
 }
+
 .stToolbar {
     display: none !important;
 }
@@ -107,6 +110,7 @@ p, li, span, div, label {
     max-width: 760px;
 }
 
+/* ---------- Inputs ---------- */
 div[data-testid="stSelectbox"] label,
 div[data-testid="stTextInput"] label {
     font-size: 1.02rem !important;
@@ -211,6 +215,7 @@ input, textarea, select, button {
     color: #111827 !important;
 }
 
+/* ---------- Alerts ---------- */
 .stAlert {
     border-radius: 18px;
     border: 1px solid rgba(22, 163, 74, 0.12);
@@ -221,12 +226,14 @@ input, textarea, select, button {
     font-weight: 400 !important;
 }
 
+/* ---------- Default Streamlit Metrics ---------- */
 [data-testid="stMetric"] {
     background: #ffffff !important;
     border: 1px solid #eceff3;
     border-radius: 22px;
     padding: 20px 22px;
     box-shadow: 0 10px 28px rgba(0,0,0,0.04);
+    min-height: 145px;
 }
 
 [data-testid="stMetricLabel"] {
@@ -236,11 +243,45 @@ input, textarea, select, button {
 }
 
 [data-testid="stMetricValue"] {
-    font-size: 2.6rem !important;
+    font-size: 1.75rem !important;
     font-weight: 600 !important;
     color: #1f2937 !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    word-break: break-word !important;
 }
 
+/* ---------- Custom Metric Card For Location ---------- */
+.custom-metric {
+    background: #ffffff !important;
+    border: 1px solid #eceff3;
+    border-radius: 22px;
+    padding: 20px 22px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.04);
+    min-height: 145px;
+}
+
+.custom-metric-label {
+    font-size: 0.98rem !important;
+    color: #667085 !important;
+    font-weight: 500 !important;
+    margin-bottom: 18px;
+}
+
+.custom-metric-value {
+    font-size: 1.75rem !important;
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+    line-height: 1.35 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    word-break: break-word !important;
+}
+
+/* ---------- Result Sections ---------- */
 .section-title {
     font-size: 1.35rem;
     font-weight: 600;
@@ -296,6 +337,7 @@ details * {
     color: #111827 !important;
 }
 
+/* ---------- Mobile ---------- */
 @media screen and (max-width: 768px) {
     .block-container {
         padding-top: 1.1rem;
@@ -347,15 +389,36 @@ details * {
 
     [data-testid="stMetric"] {
         padding: 16px 18px;
+        min-height: 125px;
     }
 
     [data-testid="stMetricValue"] {
-        font-size: 2.15rem !important;
+        font-size: 1.45rem !important;
         font-weight: 600 !important;
+        line-height: 1.3 !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+        word-break: break-word !important;
     }
 
     [data-testid="stMetricLabel"] {
         font-size: 0.96rem !important;
+    }
+
+    .custom-metric {
+        min-height: 125px;
+        padding: 16px 18px;
+    }
+
+    .custom-metric-value {
+        font-size: 1.45rem !important;
+        line-height: 1.35 !important;
+    }
+
+    .custom-metric-label {
+        font-size: 0.96rem !important;
+        margin-bottom: 14px;
     }
 
     .model-item {
@@ -528,6 +591,7 @@ if search_model:
             all_compatible.extend(parts)
 
         all_compatible = sorted(set(all_compatible))
+        location_text = " & ".join(locations)
 
         st.success("Result found")
 
@@ -542,7 +606,18 @@ if search_model:
         )
 
         metric_col1, metric_col2, metric_col3 = st.columns(3)
-        metric_col1.metric("Location", " & ".join(locations))
+
+        with metric_col1:
+            st.markdown(
+                f'''
+                <div class="custom-metric">
+                    <div class="custom-metric-label">Location</div>
+                    <div class="custom-metric-value">{location_text}</div>
+                </div>
+                ''',
+                unsafe_allow_html=True
+            )
+
         metric_col2.metric("Compatible Count", len(all_compatible))
         metric_col3.metric("Display Type", display_type)
 
