@@ -59,7 +59,7 @@ p, li, span, div, label {
     border: 1px solid #f0dede;
     border-radius: 7px;
     padding: 30px 32px;
-    box-shadow: 0 18px 45px rgba(25, 25, 25, 0.06);
+    box-shadow: 0 4px 14px rgba(25, 25, 25, 0.025);
     margin-bottom: 26px;
     position: relative;
     overflow: hidden;
@@ -240,7 +240,7 @@ input, textarea, select, button {
     border: 1px solid #eceff3;
     border-radius: 7px;
     padding: 20px 22px;
-    box-shadow: 0 10px 28px rgba(0,0,0,0.04);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.025);
     min-height: 145px;
     overflow: visible !important;
 }
@@ -282,7 +282,7 @@ input, textarea, select, button {
     border-radius: 7px;
     padding: 15px 18px;
     margin: 18px 0 16px 0;
-    box-shadow: 0 8px 22px rgba(0,0,0,0.035);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.02);
     font-size: 1.02rem;
     color: #1f2937 !important;
     font-weight: 400 !important;
@@ -305,7 +305,7 @@ input, textarea, select, button {
     border-radius: 7px;
     padding: 13px 15px;
     margin-bottom: 9px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.018);
     color: #1f2937 !important;
     font-weight: 400 !important;
     font-size: 1rem !important;
