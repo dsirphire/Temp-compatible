@@ -81,7 +81,7 @@ p, li, span, div, label {
     color: #d92d37 !important;
     border: 1px solid #ffd8d8;
     padding: 8px 14px;
-    border-radius: 999px;
+    border-radius: 7px;
     font-size: 0.82rem;
     font-weight: 600;
     letter-spacing: 0.03em;
@@ -218,7 +218,7 @@ input, textarea, select, button {
 
 /* ---------- Alerts ---------- */
 .stAlert {
-    border-radius: 18px;
+    border-radius: 7px;
     border: 1px solid rgba(22, 163, 74, 0.12);
 }
 
@@ -238,7 +238,7 @@ input, textarea, select, button {
 .metric-card {
     background: #ffffff !important;
     border: 1px solid #eceff3;
-    border-radius: 22px;
+    border-radius: 7px;
     padding: 20px 22px;
     box-shadow: 0 10px 28px rgba(0,0,0,0.04);
     min-height: 145px;
@@ -279,7 +279,7 @@ input, textarea, select, button {
 .selected-model {
     background: #ffffff !important;
     border: 1px solid #eceff3;
-    border-radius: 18px;
+    border-radius: 7px;
     padding: 15px 18px;
     margin: 18px 0 16px 0;
     box-shadow: 0 8px 22px rgba(0,0,0,0.035);
@@ -302,7 +302,7 @@ input, textarea, select, button {
 .model-item {
     background: #ffffff !important;
     border: 1px solid #eceff3;
-    border-radius: 16px;
+    border-radius: 7px;
     padding: 13px 15px;
     margin-bottom: 9px;
     box-shadow: 0 6px 16px rgba(0,0,0,0.03);
@@ -333,7 +333,7 @@ details * {
 
     .app-card {
         padding: 22px 20px;
-        border-radius: 22px;
+        border-radius: 7px;
         margin-bottom: 20px;
     }
 
@@ -382,7 +382,7 @@ details * {
     .metric-card {
         min-height: 118px;
         padding: 16px 15px;
-        border-radius: 20px;
+        border-radius: 7px;
     }
 
     .location-card {
