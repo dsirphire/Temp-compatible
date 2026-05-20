@@ -227,7 +227,7 @@ input, textarea, select, button {
     font-weight: 400 !important;
 }
 
-/* ---------- Custom Metric Grid ---------- */
+/* ---------- Metric Grid ---------- */
 .metric-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -263,7 +263,7 @@ input, textarea, select, button {
     word-break: break-word !important;
 }
 
-.metric-card.location-card .metric-value {
+.location-card .metric-value {
     font-size: 1.45rem !important;
 }
 
@@ -385,7 +385,7 @@ details * {
         border-radius: 20px;
     }
 
-    .metric-card.location-card {
+    .location-card {
         grid-column: 1 / -1;
         min-height: auto;
     }
@@ -400,7 +400,7 @@ details * {
         line-height: 1.28 !important;
     }
 
-    .metric-card.location-card .metric-value {
+    .location-card .metric-value {
         font-size: 1.18rem !important;
         line-height: 1.35 !important;
     }
@@ -585,37 +585,31 @@ if search_model:
 
         st.success("Result found")
 
-        st.markdown(
-            f'''
-            <div class="selected-model">
-                <span class="label">Selected model:</span>
-                <span class="value">{safe_search_model}</span>
-            </div>
-            ''',
-            unsafe_allow_html=True
-        )
+        selected_model_html = f"""
+<div class="selected-model">
+    <span class="label">Selected model:</span>
+    <span class="value">{safe_search_model}</span>
+</div>
+"""
+        st.markdown(selected_model_html, unsafe_allow_html=True)
 
-        st.markdown(
-            f'''
-            <div class="metric-grid">
-                <div class="metric-card location-card">
-                    <div class="metric-label">Location</div>
-                    <div class="metric-value">{safe_location_text}</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">Compatible Count</div>
-                    <div class="metric-value">{safe_count}</div>
-                </div>
-
-                <div class="metric-card">
-                    <div class="metric-label">Display Type</div>
-                    <div class="metric-value">{safe_display_type}</div>
-                </div>
-            </div>
-            ''',
-            unsafe_allow_html=True
-        )
+        metric_html = f"""
+<div class="metric-grid">
+    <div class="metric-card location-card">
+        <div class="metric-label">Location</div>
+        <div class="metric-value">{safe_location_text}</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Compatible Count</div>
+        <div class="metric-value">{safe_count}</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Display Type</div>
+        <div class="metric-value">{safe_display_type}</div>
+    </div>
+</div>
+"""
+        st.markdown(metric_html, unsafe_allow_html=True)
 
         st.markdown('<div class="section-title">Compatible Model List</div>', unsafe_allow_html=True)
 
