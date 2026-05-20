@@ -32,7 +32,6 @@ html, body, [data-testid="stAppViewContainer"], .stApp {
     max-width: 1080px;
 }
 
-/* Hide Streamlit default menu/footer/header as much as possible */
 #MainMenu {
     visibility: hidden;
 }
@@ -46,13 +45,11 @@ header {
     display: none !important;
 }
 
-/* Base readable text */
 html, body, .stApp,
 p, li, span, div, label {
     color: #111827 !important;
 }
 
-/* Hero section */
 .app-card {
     background: linear-gradient(180deg, #ffffff 0%, #fffdfd 100%) !important;
     border: 1px solid #f0dede;
@@ -110,7 +107,6 @@ p, li, span, div, label {
     max-width: 760px;
 }
 
-/* Input labels */
 div[data-testid="stSelectbox"] label,
 div[data-testid="stTextInput"] label {
     font-size: 1.02rem !important;
@@ -118,7 +114,6 @@ div[data-testid="stTextInput"] label {
     color: #1f2937 !important;
 }
 
-/* Input wrapper text */
 div[data-testid="stSelectbox"] div,
 div[data-testid="stTextInput"] div {
     font-size: 1.02rem !important;
@@ -126,7 +121,6 @@ div[data-testid="stTextInput"] div {
     font-weight: 400 !important;
 }
 
-/* Input boxes */
 div[data-baseweb="select"] > div,
 div[data-baseweb="input"] > div {
     border-radius: 16px !important;
@@ -137,7 +131,6 @@ div[data-baseweb="input"] > div {
     box-shadow: none !important;
 }
 
-/* Dropdown selected value */
 div[data-baseweb="select"] span {
     color: #111827 !important;
     font-weight: 400 !important;
@@ -145,7 +138,6 @@ div[data-baseweb="select"] span {
     -webkit-text-fill-color: #111827 !important;
 }
 
-/* Manual input text */
 div[data-baseweb="input"] input {
     color: #111827 !important;
     background-color: #ffffff !important;
@@ -153,7 +145,6 @@ div[data-baseweb="input"] input {
     -webkit-text-fill-color: #111827 !important;
 }
 
-/* Placeholder */
 div[data-baseweb="input"] input::placeholder {
     color: #667085 !important;
     opacity: 1 !important;
@@ -161,7 +152,6 @@ div[data-baseweb="input"] input::placeholder {
     -webkit-text-fill-color: #667085 !important;
 }
 
-/* Force dropdown menu readable on all phones */
 div[data-baseweb="popover"] {
     background-color: #ffffff !important;
     color: #111827 !important;
@@ -215,14 +205,12 @@ li[aria-selected="true"] * {
     font-weight: 500 !important;
 }
 
-/* Prevent browser dark-mode inversion */
 input, textarea, select, button {
     color-scheme: light !important;
     background-color: #ffffff !important;
     color: #111827 !important;
 }
 
-/* Alerts */
 .stAlert {
     border-radius: 18px;
     border: 1px solid rgba(22, 163, 74, 0.12);
@@ -233,7 +221,6 @@ input, textarea, select, button {
     font-weight: 400 !important;
 }
 
-/* Metrics */
 [data-testid="stMetric"] {
     background: #ffffff !important;
     border: 1px solid #eceff3;
@@ -254,7 +241,6 @@ input, textarea, select, button {
     color: #1f2937 !important;
 }
 
-/* Section headings */
 .section-title {
     font-size: 1.35rem;
     font-weight: 600;
@@ -263,7 +249,6 @@ input, textarea, select, button {
     margin-bottom: 14px;
 }
 
-/* Selected model card */
 .selected-model {
     background: #ffffff !important;
     border: 1px solid #eceff3;
@@ -287,7 +272,6 @@ input, textarea, select, button {
     font-weight: 400 !important;
 }
 
-/* Compatible list cards */
 .model-item {
     background: #ffffff !important;
     border: 1px solid #eceff3;
@@ -301,7 +285,6 @@ input, textarea, select, button {
     line-height: 1.45;
 }
 
-/* Expander */
 details {
     background: #ffffff !important;
     border-radius: 16px !important;
@@ -313,7 +296,6 @@ details * {
     color: #111827 !important;
 }
 
-/* Mobile optimization */
 @media screen and (max-width: 768px) {
     .block-container {
         padding-top: 1.1rem;
@@ -471,19 +453,29 @@ def load_data(sheet_url):
 
     # All Modals sheet:
     # Column C = model names
-    models_df = models_raw.iloc[:, [2]].copy()
-    models_df.columns = ["model"]
+    # Column D = display type Flat / Curve
+    models_df = models_raw.iloc[:, [2, 3]].copy()
+    models_df.columns = ["model", "display_type"]
 
     models_df["model"] = models_df["model"].astype(str).str.strip()
+    models_df["display_type"] = models_df["display_type"].astype(str).str.strip()
 
     models_df = models_df[
         (models_df["model"] != "") &
         (~models_df["model"].str.lower().str.contains("all modals|all models|nan", na=False))
     ]
 
-    model_list = sorted(models_df["model"].drop_duplicates().tolist())
+    models_df = models_df.drop_duplicates(subset=["model"], keep="first").reset_index(drop=True)
 
-    return compatible_df, model_list
+    model_list = sorted(models_df["model"].tolist())
+
+    display_type_map = {
+        row["model"].lower(): row["display_type"]
+        for _, row in models_df.iterrows()
+        if row["display_type"] and row["display_type"].lower() != "nan"
+    }
+
+    return compatible_df, model_list, display_type_map
 
 
 # ---------- Load Data ----------
@@ -492,7 +484,7 @@ if not SHEET_URL:
     st.stop()
 
 try:
-    df, model_list = load_data(SHEET_URL)
+    df, model_list, display_type_map = load_data(SHEET_URL)
 except Exception as e:
     st.error("Unable to load Google Sheet data.")
     st.caption(str(e))
@@ -528,6 +520,7 @@ if search_model:
         st.warning("No compatible result found.")
     else:
         locations = sorted(result["location"].astype(str).str.strip().unique())
+        display_type = display_type_map.get(search_model.lower(), "Not found")
 
         all_compatible = []
         for value in result["compatible"].astype(str):
@@ -548,9 +541,10 @@ if search_model:
             unsafe_allow_html=True
         )
 
-        metric_col1, metric_col2 = st.columns(2)
+        metric_col1, metric_col2, metric_col3 = st.columns(3)
         metric_col1.metric("Location", " & ".join(locations))
         metric_col2.metric("Compatible Count", len(all_compatible))
+        metric_col3.metric("Display Type", display_type)
 
         st.markdown('<div class="section-title">Compatible Model List</div>', unsafe_allow_html=True)
 
