@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import re
+import html
 
 st.set_page_config(
     page_title="TC Dash",
@@ -226,51 +227,32 @@ input, textarea, select, button {
     font-weight: 400 !important;
 }
 
-/* ---------- Default Streamlit Metrics ---------- */
-[data-testid="stMetric"] {
+/* ---------- Custom Metric Grid ---------- */
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin: 18px 0 32px 0;
+}
+
+.metric-card {
     background: #ffffff !important;
     border: 1px solid #eceff3;
     border-radius: 22px;
     padding: 20px 22px;
     box-shadow: 0 10px 28px rgba(0,0,0,0.04);
     min-height: 145px;
-}
-
-[data-testid="stMetricLabel"] {
-    font-size: 0.98rem !important;
-    color: #667085 !important;
-    font-weight: 500 !important;
-}
-
-[data-testid="stMetricValue"] {
-    font-size: 1.75rem !important;
-    font-weight: 600 !important;
-    color: #1f2937 !important;
-    line-height: 1.3 !important;
-    white-space: normal !important;
     overflow: visible !important;
-    text-overflow: unset !important;
-    word-break: break-word !important;
 }
 
-/* ---------- Custom Metric Card For Location ---------- */
-.custom-metric {
-    background: #ffffff !important;
-    border: 1px solid #eceff3;
-    border-radius: 22px;
-    padding: 20px 22px;
-    box-shadow: 0 10px 28px rgba(0,0,0,0.04);
-    min-height: 145px;
-}
-
-.custom-metric-label {
+.metric-label {
     font-size: 0.98rem !important;
     color: #667085 !important;
     font-weight: 500 !important;
     margin-bottom: 18px;
 }
 
-.custom-metric-value {
+.metric-value {
     font-size: 1.75rem !important;
     font-weight: 600 !important;
     color: #1f2937 !important;
@@ -279,6 +261,10 @@ input, textarea, select, button {
     overflow: visible !important;
     text-overflow: unset !important;
     word-break: break-word !important;
+}
+
+.metric-card.location-card .metric-value {
+    font-size: 1.45rem !important;
 }
 
 /* ---------- Result Sections ---------- */
@@ -387,38 +373,36 @@ details * {
         -webkit-text-fill-color: #667085 !important;
     }
 
-    [data-testid="stMetric"] {
-        padding: 16px 18px;
-        min-height: 125px;
+    .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin: 16px 0 28px 0;
     }
 
-    [data-testid="stMetricValue"] {
-        font-size: 1.45rem !important;
-        font-weight: 600 !important;
-        line-height: 1.3 !important;
-        white-space: normal !important;
-        overflow: visible !important;
-        text-overflow: unset !important;
-        word-break: break-word !important;
+    .metric-card {
+        min-height: 118px;
+        padding: 16px 15px;
+        border-radius: 20px;
     }
 
-    [data-testid="stMetricLabel"] {
-        font-size: 0.96rem !important;
+    .metric-card.location-card {
+        grid-column: 1 / -1;
+        min-height: auto;
     }
 
-    .custom-metric {
-        min-height: 125px;
-        padding: 16px 18px;
+    .metric-label {
+        font-size: 0.86rem !important;
+        margin-bottom: 10px;
     }
 
-    .custom-metric-value {
-        font-size: 1.45rem !important;
+    .metric-value {
+        font-size: 1.35rem !important;
+        line-height: 1.28 !important;
+    }
+
+    .metric-card.location-card .metric-value {
+        font-size: 1.18rem !important;
         line-height: 1.35 !important;
-    }
-
-    .custom-metric-label {
-        font-size: 0.96rem !important;
-        margin-bottom: 14px;
     }
 
     .model-item {
@@ -591,7 +575,13 @@ if search_model:
             all_compatible.extend(parts)
 
         all_compatible = sorted(set(all_compatible))
+
         location_text = " & ".join(locations)
+
+        safe_search_model = html.escape(search_model)
+        safe_location_text = html.escape(location_text)
+        safe_display_type = html.escape(str(display_type))
+        safe_count = html.escape(str(len(all_compatible)))
 
         st.success("Result found")
 
@@ -599,33 +589,40 @@ if search_model:
             f'''
             <div class="selected-model">
                 <span class="label">Selected model:</span>
-                <span class="value">{search_model}</span>
+                <span class="value">{safe_search_model}</span>
             </div>
             ''',
             unsafe_allow_html=True
         )
 
-        metric_col1, metric_col2, metric_col3 = st.columns(3)
-
-        with metric_col1:
-            st.markdown(
-                f'''
-                <div class="custom-metric">
-                    <div class="custom-metric-label">Location</div>
-                    <div class="custom-metric-value">{location_text}</div>
+        st.markdown(
+            f'''
+            <div class="metric-grid">
+                <div class="metric-card location-card">
+                    <div class="metric-label">Location</div>
+                    <div class="metric-value">{safe_location_text}</div>
                 </div>
-                ''',
-                unsafe_allow_html=True
-            )
 
-        metric_col2.metric("Compatible Count", len(all_compatible))
-        metric_col3.metric("Display Type", display_type)
+                <div class="metric-card">
+                    <div class="metric-label">Compatible Count</div>
+                    <div class="metric-value">{safe_count}</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Display Type</div>
+                    <div class="metric-value">{safe_display_type}</div>
+                </div>
+            </div>
+            ''',
+            unsafe_allow_html=True
+        )
 
         st.markdown('<div class="section-title">Compatible Model List</div>', unsafe_allow_html=True)
 
         for model in all_compatible:
+            safe_model = html.escape(model)
             st.markdown(
-                f'<div class="model-item">{model}</div>',
+                f'<div class="model-item">{safe_model}</div>',
                 unsafe_allow_html=True
             )
 
