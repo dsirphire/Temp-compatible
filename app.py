@@ -57,7 +57,7 @@ p, li, span, div, label {
 .app-card {
     background: linear-gradient(180deg, #ffffff 0%, #fffdfd 100%) !important;
     border: 1px solid #f0dede;
-    border-radius: 26px;
+    border-radius: 7px;
     padding: 30px 32px;
     box-shadow: 0 18px 45px rgba(25, 25, 25, 0.06);
     margin-bottom: 26px;
